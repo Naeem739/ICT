@@ -7,7 +7,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 import MobileMenu from '@/components/MobileMenu';
 import ProfileImage from '@/components/ProfileImage';
-import { userService } from '@/services/userService';
+
 import { Camera, Edit3, Save, X, Calendar, Shield } from 'lucide-react';
 
 export default function ProfilePage() {

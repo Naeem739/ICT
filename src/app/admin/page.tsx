@@ -7,6 +7,7 @@ import AdminRoute from '@/components/AdminRoute';
 import Link from 'next/link';
 import { 
   Chapter, 
+  PracticeSection,
   getChapters, 
   addTutorialToChapter, 
   addPracticeSectionToChapter, 
@@ -31,7 +32,7 @@ export default function AdminPage() {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
   const [chapters, setChapters] = useState<Chapter[]>([]);
-  const [selectedChapter, setSelectedChapter] = useState<Chapter & { tutorials?: any[], practiceSections?: any[], examSections?: any[] } | null>(null);
+  const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [activeTab, setActiveTab] = useState<'tutorials' | 'practice' | 'exams' | 'users'>('tutorials');
   const [loading, setLoading] = useState(true);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
@@ -251,7 +252,7 @@ export default function AdminPage() {
       }
       
       // Filter out undefined values to avoid Firebase errors
-      const practiceDataToSave: any = {
+      const practiceDataToSave: Partial<PracticeSection> = {
         imageUrl: imageUrl,
         questions: [''], // Keep empty for compatibility
         answers: [practiceData.answer], // Store the single answer

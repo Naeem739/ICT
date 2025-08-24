@@ -1,4 +1,4 @@
-import { doc, getDoc, getDocs, collection, query, orderBy, limit, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, orderBy, updateDoc, deleteDoc, addDoc, serverTimestamp, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export interface Chapter {
@@ -290,7 +290,7 @@ export const addPracticeSectionToChapter = async (chapterId: string, practice: O
     const chapterRef = doc(db, 'chapters', chapterId);
     
     // Filter out undefined values to avoid Firebase errors
-    const practiceData: any = {
+    const practiceData: Partial<PracticeSection> & { id: string; createdAt: string } = {
       id: Date.now().toString(), // Generate a unique ID
       createdAt: new Date().toISOString() // Use regular Date instead of serverTimestamp
     };
@@ -336,7 +336,7 @@ export const updatePracticeSectionInChapter = async (chapterId: string, practice
     const updatedPracticeSections = [...practiceSections];
     
     // Filter out undefined values to avoid Firebase errors
-    const practiceData: any = {
+    const practiceData: Partial<PracticeSection> & { id: string; createdAt: string } = {
       id: practiceId,
       createdAt: practiceSections[practiceIndex].createdAt // Preserve original creation date
     };
@@ -508,7 +508,7 @@ export const cleanupDuplicateChapters = async () => {
       }
       acc[chapter.title].push(chapter);
       return acc;
-    }, {} as Record<string, any[]>);
+    }, {} as Record<string, Chapter[]>);
     
     // Delete duplicate chapters, keeping only the first one
     for (const [title, chapterList] of Object.entries(chaptersByTitle)) {
