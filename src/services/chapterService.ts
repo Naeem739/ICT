@@ -1,62 +1,43 @@
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  addDoc,
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  orderBy,
-  serverTimestamp,
-  arrayUnion,
-  getDoc,
-  setDoc,
-  where
-} from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, orderBy, limit, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-
-export interface Tutorial {
-  id?: string;
-  title: string;
-  videoUrl: string;
-  links?: string[]; // New field for additional links
-  description: string;
-  createdAt: any;
-}
-
-export interface PracticeSection {
-  id?: string;
-  title?: string; // Made optional
-  description?: string; // Made optional
-  imageUrl?: string; // Optional practice image
-  questions: string[];
-  answers: string[];
-  answerType?: 'text' | 'code' | 'image' | 'mixed'; // Type of answer content
-  answerImageUrl?: string; // Optional image for answer
-  createdAt: any;
-}
-
-export interface ExamSection {
-  id?: string;
-  title: string;
-  description: string;
-  questions: string[];
-  options: string[][];
-  correctAnswers: number[];
-  timeLimit: number; // in minutes
-  passingScore: number;
-  createdAt: any;
-}
 
 export interface Chapter {
   id?: string;
   title: string;
   description: string;
-  tutorials: Tutorial[];
-  practiceSections: PracticeSection[];
-  examSections: ExamSection[];
-  createdAt: any;
-  updatedAt: any;
+  order: number;
+  tutorials?: Tutorial[];
+  practiceSections?: PracticeSection[];
+  examSections?: ExamSection[];
+}
+
+export interface Tutorial {
+  id: string;
+  title: string;
+  description: string;
+  links: string[];
+}
+
+export interface PracticeSection {
+  id: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  questions: string[];
+  answers: string[];
+  answerType: 'text' | 'code' | 'image' | 'mixed';
+  answerImageUrl?: string;
+}
+
+export interface ExamSection {
+  id: string;
+  title: string;
+  description: string;
+  questions: string[];
+  options: string[][];
+  correctAnswers: number[];
+  timeLimit: number;
+  passingScore: number;
 }
 
 // Chapter CRUD operations
@@ -86,18 +67,29 @@ export const createChapter = async (chapterData: Omit<Chapter, 'id' | 'createdAt
   }
 };
 
-export const getChapters = async () => {
+export const getChapters = async (): Promise<Chapter[]> => {
   try {
-    const q = query(collection(db, 'chapters'), orderBy('createdAt', 'asc'));
-    const querySnapshot = await getDocs(q);
+    const chaptersQuery = query(collection(db, 'chapters'), orderBy('order'));
+    const querySnapshot = await getDocs(chaptersQuery);
     const chapters: Chapter[] = [];
+    
     querySnapshot.forEach((doc) => {
-      chapters.push({ id: doc.id, ...doc.data() } as Chapter);
+      const data = doc.data();
+      chapters.push({
+        id: doc.id,
+        title: data.title,
+        description: data.description,
+        order: data.order,
+        tutorials: data.tutorials || [],
+        practiceSections: data.practiceSections || [],
+        examSections: data.examSections || []
+      });
     });
+    
     return chapters;
   } catch (error) {
     console.error('Error getting chapters:', error);
-    throw error;
+    return [];
   }
 };
 
@@ -204,23 +196,28 @@ export const createDefaultChapters = async () => {
 };
 
 // Tutorial CRUD operations
-export const addTutorialToChapter = async (chapterId: string, tutorial: Omit<Tutorial, 'id' | 'createdAt'>) => {
+export const addTutorialToChapter = async (chapterId: string, tutorialData: Omit<Tutorial, 'id'>): Promise<void> => {
   try {
     const chapterRef = doc(db, 'chapters', chapterId);
+    const chapterDoc = await getDoc(chapterRef);
+    
+    if (!chapterDoc.exists()) {
+      throw new Error('Chapter not found');
+    }
+    
+    const chapterData = chapterDoc.data();
+    const tutorials = chapterData.tutorials || [];
+    
     const newTutorial: Tutorial = {
-      ...tutorial,
-      id: Date.now().toString(), // Generate a unique ID
-      createdAt: new Date().toISOString() // Use regular Date instead of serverTimestamp
+      id: Date.now().toString(), // Simple ID generation
+      ...tutorialData
     };
     
-    await updateDoc(chapterRef, {
-      tutorials: arrayUnion(newTutorial),
-      updatedAt: serverTimestamp()
-    });
+    tutorials.push(newTutorial);
     
-    return newTutorial;
+    await updateDoc(chapterRef, { tutorials });
   } catch (error) {
-    console.error('Error adding tutorial:', error);
+    console.error('Error adding tutorial to chapter:', error);
     throw error;
   }
 };

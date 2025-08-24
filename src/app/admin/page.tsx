@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { 
   Chapter, 
   getChapters, 
-  getChapterWithAllData,
   addTutorialToChapter, 
   addPracticeSectionToChapter, 
   addExamSectionToChapter, 
@@ -16,9 +15,6 @@ import {
   deleteTutorialFromChapter, 
   updatePracticeSectionInChapter, 
   deletePracticeSectionFromChapter, 
-  deleteAllChapters, 
-  createDefaultChapters,
-  cleanupDuplicateChapters,
   createChapter,
   updateChapter,
   deleteChapter
@@ -43,8 +39,19 @@ export default function AdminPage() {
   const [showExamModal, setShowExamModal] = useState(false);
   const [showEditTutorialModal, setShowEditTutorialModal] = useState(false);
   const [showEditPracticeModal, setShowEditPracticeModal] = useState(false);
-  const [selectedTutorial, setSelectedTutorial] = useState<any>(null);
-  const [selectedPractice, setSelectedPractice] = useState<any>(null);
+  const [selectedTutorial, setSelectedTutorial] = useState<{
+    id: string;
+    title: string;
+    description: string;
+    links?: string[];
+  } | null>(null);
+  const [selectedPractice, setSelectedPractice] = useState<{
+    id: string;
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    answerImageUrl?: string;
+  } | null>(null);
   const [showCreateChapterModal, setShowCreateChapterModal] = useState(false);
   const [showEditChapterModal, setShowEditChapterModal] = useState(false);
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
@@ -166,7 +173,15 @@ export default function AdminPage() {
       }
       
       // Filter out undefined values to avoid Firebase errors
-      const practiceDataToSave: any = {
+      const practiceDataToSave: {
+        imageUrl: string;
+        questions: string[];
+        answers: string[];
+        answerType: 'text' | 'code' | 'image' | 'mixed';
+        answerImageUrl: string;
+        title?: string;
+        description?: string;
+      } = {
         imageUrl: imageUrl,
         questions: [''], // Keep empty for compatibility
         answers: [practiceData.answer], // Store the single answer
@@ -188,9 +203,8 @@ export default function AdminPage() {
 
   const handleEditTutorial = async (tutorialData: {
     title: string;
-    videoUrl: string;
-    links: string[];
     description: string;
+    links: string[];
   }) => {
     if (!selectedChapter || !selectedTutorial) return;
     try {

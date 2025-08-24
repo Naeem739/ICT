@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   async function signup(email: string, password: string, displayName?: string) {
-    let userCredential: any = null;
+    let userCredential: { user: { uid: string; delete: () => Promise<void> } } | null = null;
     
     try {
       console.log('Starting signup process for:', email);

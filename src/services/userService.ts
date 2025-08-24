@@ -107,7 +107,7 @@ export const userService = {
         throw new Error('User ID is required');
       }
 
-      const updateData: any = {};
+      const updateData: Partial<Pick<UserRole, 'displayName' | 'profileImage'>> = {};
       if (updates.displayName !== undefined) updateData.displayName = updates.displayName;
       if (updates.profileImage !== undefined) updateData.profileImage = updates.profileImage;
 
@@ -136,7 +136,7 @@ export const userService = {
       
       // Check for specific Firestore errors
       if (error && typeof error === 'object' && 'code' in error) {
-        const firestoreError = error as any;
+        const firestoreError = error as { code: string; message: string };
         switch (firestoreError.code) {
           case 'permission-denied':
             throw new Error('Permission denied: Check Firestore security rules');
@@ -266,7 +266,7 @@ export const userService = {
   },
 
   // Test database connection and permissions
-  async testDatabaseConnection(uid: string): Promise<{ success: boolean; message: string; details?: any }> {
+  async testDatabaseConnection(uid: string): Promise<{ success: boolean; message: string; details?: Record<string, unknown> }> {
     try {
       if (!uid) {
         return { success: false, message: 'User ID is required' };
@@ -304,7 +304,7 @@ export const userService = {
       
       let errorMessage = 'Unknown error occurred';
       if (error && typeof error === 'object' && 'code' in error) {
-        const firestoreError = error as any;
+        const firestoreError = error as { code: string; message: string };
         errorMessage = `Firestore error: ${firestoreError.code} - ${firestoreError.message}`;
       } else if (error instanceof Error) {
         errorMessage = error.message;

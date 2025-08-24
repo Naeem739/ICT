@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Eye, EyeOff, Mail, Lock, User, Loader2, Shield } from 'lucide-react';
 
 export default function Signup() {
@@ -18,24 +17,21 @@ export default function Signup() {
   const { signup } = useAuth();
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      return setError('Passwords do not match');
-    }
+    setLoading(true);
+    setError('');
 
     try {
-      setError('');
-      setLoading(true);
       await signup(email, password, name);
-      router.push('/home');
-    } catch (error: any) {
-      setError('Failed to create an account: ' + error.message);
+      // Redirect will be handled by AuthContext
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred during signup';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="w-full">

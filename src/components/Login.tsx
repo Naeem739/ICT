@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Eye, EyeOff, Mail, Lock, Loader2, Shield } from 'lucide-react';
 
 export default function Login() {
@@ -15,20 +14,21 @@ export default function Login() {
   const { login } = useAuth();
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
 
     try {
-      setError('');
-      setLoading(true);
       await login(email, password);
-      router.push('/home');
-    } catch (error: any) {
-      setError('Failed to log in: ' + error.message);
+      // Redirect will be handled by AuthContext
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred during login';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="w-full">
@@ -121,15 +121,15 @@ export default function Login() {
         </form>
 
         <div className="mt-6 sm:mt-8 text-center">
-          <p className="text-sm text-gray-300">
-            Don't have an account?{" "}
-            <button 
+          <p className="text-sm text-gray-600">
+            Don&apos;t have an account?{' '}
+            <button
+              type="button"
               onClick={() => {
-                const newUrl = '/?tab=signup';
-                window.history.pushState({}, '', newUrl);
+                window.history.pushState({}, '', '/?tab=signup');
                 window.dispatchEvent(new PopStateEvent('popstate'));
               }}
-              className="font-medium text-blue-400 hover:text-blue-300 transition-colors duration-200 underline"
+              className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
             >
               Create an account
             </button>
