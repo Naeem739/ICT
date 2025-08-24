@@ -1,0 +1,300 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Typography Variables */
+  --font-body: 'Roboto', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Base Typography */
+* {
+  font-family: var(--font-body);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: var(--text-base); /* 16px */
+  line-height: var(--leading-normal);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--foreground);
+}
+
+h1 {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: var(--text-3xl);
+  font-weight: 600;
+}
+
+h3 {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+}
+
+h4 {
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+
+h5 {
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+
+h6 {
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+
+/* Paragraph and Text Elements */
+p {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  margin-bottom: 1rem;
+}
+
+/* Small Text */
+.text-sm, small {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+/* Large Text */
+.text-lg {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+}
+
+/* Button Text */
+button, .btn {
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+/* Input Text */
+input, textarea, select {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+}
+
+/* Link Styles */
+a {
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+/* Custom code block styling */
+.code-block {
+  position: relative;
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: #e5e7eb;
+}
+
+.code-block code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Syntax highlighting overrides for dark theme */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6b7280;
+}
+
+.token.punctuation {
+  color: #e5e7eb;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #fbbf24;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #34d399;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #f87171;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #a78bfa;
+}
+
+.token.function,
+.token.class-name {
+  color: #60a5fa;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #fbbf24;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+/* Utility Classes for Typography */
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  :root {
+    --text-4xl: 2rem;     /* 32px */
+    --text-3xl: 1.75rem;  /* 28px */
+    --text-2xl: 1.375rem; /* 22px */
+    --text-xl: 1.125rem;  /* 18px */
+  }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 640px) {
+  body {
+    font-size: 0.875rem; /* 14px on mobile */
+  }
+  
+  h1 {
+    font-size: 1.5rem; /* 24px */
+  }
+  
+  h2 {
+    font-size: 1.25rem; /* 20px */
+  }
+  
+  h3 {
+    font-size: 1.125rem; /* 18px */
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 641px) and (max-width: 1024px) {
+  body {
+    font-size: 0.9375rem; /* 15px on tablet */
+  }
+}
+
+/* Responsive spacing utilities */
+@media (max-width: 640px) {
+  .mobile-p-4 {
+    padding: 1rem;
+  }
+  
+  .mobile-p-6 {
+    padding: 1.5rem;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.75rem;
+  }
+  
+  .mobile-text-base {
+    font-size: 0.875rem;
+  }
+}
